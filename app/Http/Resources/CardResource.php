@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Crypt;
 
 class CardResource extends JsonResource
 {
@@ -13,9 +14,9 @@ class CardResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'cardNumber' => '****'.substr($this->cardNumber, -4),
-            'month' => $this->month,
-            'year' => $this->year,
+            'cardNumber' => '****'.substr(Crypt::decryptString($this->cardNumber), -4),
+            'month' => Crypt::decryptString($this->month),
+            'year' => Crypt::decryptString($this->year),
         ];
     }
 }
