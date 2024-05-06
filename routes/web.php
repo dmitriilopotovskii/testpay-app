@@ -15,6 +15,7 @@ Route::get('/dashboard', function () {
 
 Route::get('/paid', [PaidController::class, 'index'])->middleware(['auth', 'verified'])->name('paid.index');
 Route::post('/paid', [PaidController::class, 'pay'])->middleware(['auth', 'verified']);
+Route::post('/paid/card', [PaidController::class, 'processSavedCardPayment'])->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -62,6 +62,12 @@ const submit = () => {
         remember: remember.value
     })
 }
+const cardSubmit = ($id) => {
+    router.post('/paid/card', {
+        id: $id,
+        rouble: rouble.value,
+    })
+}
 
 const expirationDate = computed(() => {
     return valid.expirationDate(month.value + '/' + year.value).isValid
@@ -169,7 +175,7 @@ const convertDollarToRouble = (value) => {
                                 <div v-for="card in cards"
                                     class="flex flex-col justify-center my-auto text-xs leading-5 text-white"
                                 >
-                                    <div
+                                    <div @click="cardSubmit(card.id)"
                                         class="flex  flex-col pt-8 pb-2  bg-blue-400 hover:bg-blue-500 rounded-lg w-28 h-20">
                                         <div class="flex gap-1 justify-end mx-2 whitespace-nowrap">
                                             <div>{{card.cardNumber}}</div>
