@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {Head, router} from '@inertiajs/vue3';
 import InputError from "@/Components/InputError.vue";
@@ -7,13 +7,23 @@ import * as yup from 'yup';
 import valid from 'card-validator'
 import {computed, ref} from "vue";
 
+interface Card {
+    id: number,
+    dollar: number,
+    rouble: number,
+    cardNumber: string,
+    cvc: string,
+    month: string,
+    year: string
+}
+const props = defineProps<
+    {
+        errors: Object,
+        success: Object | null,
+        cards: Card[],
+        }>()
 
-const props = defineProps({
-    errors: Object,
-    success: Object,
-    cards: Object
-})
-const { errors, defineField} = useForm({
+const {errors, defineField} = useForm({
     validationSchema: yup.object({
         dollar: yup.number().positive().required(),
         rouble: yup.number().positive().required().min(15),
@@ -54,7 +64,7 @@ const [month = '00', monthAttrs] = defineField('month')
 const [year = '00', yearAttrs] = defineField('year')
 const submit = () => {
     router.post('/paid', {
-        rouble: rouble.value,
+        rouble: rouble,
         cardNumber: cardNumber.value,
         cvc: cvc.value,
         month: month.value,
@@ -62,9 +72,9 @@ const submit = () => {
         remember: remember.value
     })
 }
-const cardSubmit = ($id) => {
+const cardSubmit = (id) => {
     router.post('/paid/card', {
-        id: $id,
+        id: id,
         rouble: rouble.value,
     })
 }
@@ -72,11 +82,11 @@ const cardSubmit = ($id) => {
 const expirationDate = computed(() => {
     return valid.expirationDate(month.value + '/' + year.value).isValid
 })
-const convertRoubleToDollar = (value) => {
-    dollar.value = Math.round(value / 15 * 100) / 100
+const convertRoubleToDollar = (number: number) => {
+    dollar.value = Math.round(number / 15 * 100) / 100
 }
-const convertDollarToRouble = (value) => {
-    rouble.value = Math.round(value * 15 * 100) / 100
+const convertDollarToRouble = (number: number) => {
+    rouble.value = Math.round(number * 15 * 100) / 100
 }
 
 </script>
@@ -173,14 +183,17 @@ const convertDollarToRouble = (value) => {
 
                             <div class="flex gap-4 self-start mt-6">
                                 <div v-for="card in cards"
-                                    class="flex flex-col justify-center my-auto text-xs leading-5 text-white"
+                                     class="flex flex-col justify-center my-auto text-xs leading-5 text-white"
                                 >
                                     <div @click="cardSubmit(card.id)"
-                                        class="flex  flex-col pt-8 pb-2  bg-blue-400 hover:bg-blue-500 rounded-lg w-28 h-20">
+                                         class="flex  flex-col pt-8 pb-2  bg-blue-400 hover:bg-blue-500 rounded-lg w-28 h-20">
                                         <div class="flex gap-1 justify-end mx-2 whitespace-nowrap">
-                                            <div>{{card.cardNumber}}</div>
+                                            <div>{{ card.cardNumber }}</div>
                                         </div>
-                                        <div class="flex gap-1 justify-end mx-2">{{ card.month }} / {{ card.year }}</div>
+                                        <div class="flex gap-1 justify-end mx-2">{{ card.month }} / {{
+                                                card.year
+                                            }}
+                                        </div>
                                     </div>
                                 </div>
                                 <div
@@ -293,7 +306,7 @@ const convertDollarToRouble = (value) => {
                                         loading="lazy"
                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/15b53e4e5e05dece705ef61e9808124975eb249abf613db566e6a49bdbc4920c?apiKey=686fd7d72a514caaa122e42a90bcee15&"
                                         class="shrink-0 w-5 aspect-square"
-                                     alt=""/>
+                                        alt=""/>
                                 </div>
                             </div>
                             <div class="mt-2 text-sm  text-gray-700 leading-6  max-md:max-w-full">

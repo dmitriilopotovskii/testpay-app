@@ -11,6 +11,7 @@ services:
         ports:
             - '${APP_PORT:-80}:80'
             - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+            - 9912:9912
         environment:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 1
@@ -47,6 +48,12 @@ services:
                 - '-p${DB_PASSWORD}'
             retries: 3
             timeout: 5s
+    buggregator:
+        image: ghcr.io/buggregator/server:dev
+        ports:
+            - 8000:8000
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge

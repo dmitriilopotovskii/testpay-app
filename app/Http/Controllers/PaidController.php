@@ -17,7 +17,6 @@ class PaidController extends Controller
     {
         $cards = auth()->user()->cards()->get();
         $cardResource = CardResource::collection($cards)->resolve();
-
         return Inertia::render('Paid', [
             'success' => session('success'),
             'cards' => $cardResource
@@ -47,7 +46,6 @@ class PaidController extends Controller
         $card->cvc = Crypt::decryptString($card->cvc);
         $ammount = $request->rouble;
         if (Gate::allows('paid-card', $card)) {
-
             // Simulate payment processing
 
 
